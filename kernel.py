@@ -16,7 +16,7 @@ class Kernel(object):
         return f
 
     @staticmethod
-    def _polykernel(dimension, offset=0.0, gamma=1.0):
+    def polykernel(dimension, offset=0.0, gamma=1.0):
         def f(x, y):
             return (gamma * (offset + np.dot(x, y)) )** dimension
         return f
