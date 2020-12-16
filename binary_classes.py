@@ -311,20 +311,28 @@ class binary_classification_qp(Base_binary_classification):
         n_samples, n_features = X.shape
         self._n_samples = n_samples
         self._n_features = n_features
-        
+        n = n_samples
         K = self._gram_matrix(X)
+        q = -np.ones((n,1))
+        t = y
+        P = t*np.transpose(t)*K
+        A = t.reshape(1,n)
+        b = 0
+        G = np.concatenate((np.eye(n),-np.eye(n)))
+        h = np.concatenate((self.C*np.ones((n,1)),np.zeros((n,1))))
 
-        P = cvxopt.matrix(np.outer(y, y) * K, tc='d')
-        q = cvxopt.matrix(-1 * np.ones(n_samples), tc='d')
-        G_1 = cvxopt.matrix(np.diag(np.ones(n_samples) * -1))
-        h_1 = cvxopt.matrix(np.zeros(n_samples))
-        G_2 = cvxopt.matrix(np.diag(np.ones(n_samples)))
-        h_2 = cvxopt.matrix(np.ones(n_samples) * self.C)
-        G = cvxopt.matrix(np.vstack((G_1, G_2)), tc='d')
-        h = cvxopt.matrix(np.vstack((h_1, h_2)), tc='d')
-        A = cvxopt.matrix(y, (1, n_samples), tc='d')
-        b = cvxopt.matrix(0.0, tc='d')
+
+        # P = cvxopt.matrix(np.outer(y, y) * K, tc='d')
+        # q = cvxopt.matrix(-1 * np.ones(n_samples), tc='d')
+        # G_1 = cvxopt.matrix(np.diag(np.ones(n_samples) * -1))
+        # h_1 = cvxopt.matrix(np.zeros(n_samples))
+        # G_2 = cvxopt.matrix(np.diag(np.ones(n_samples)))
+        # h_2 = cvxopt.matrix(np.ones(n_samples) * self.C)
+        # G = cvxopt.matrix(np.vstack((G_1, G_2)), tc='d')
+        # h = cvxopt.matrix(np.vstack((h_1, h_2)), tc='d')
+        # A = cvxopt.matrix(y, (1, n_samples), tc='d')
+        # b = cvxopt.matrix(0.0, tc='d')
        
         cvxopt.solvers.options['show_progress'] = False
-        sol = cvxopt.solvers.qp(P, q, G, h, A, b)
+        sol = cvxopt.solvers.qp(cvxopt.matrix(P), cvxopt.matrix(q),cvxopt.matrix(G),cvxopt.matrix(h), cvxopt.matrix(A),cvxopt.matrix(b))
         return np.ravel(sol['x'])
