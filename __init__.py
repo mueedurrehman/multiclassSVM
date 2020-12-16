@@ -4,7 +4,7 @@ from .binary_classes import (
 )
 
 from .multi_classes import (
-    #multiclass_ova,
+    multiclass_ova,
     multiclass_ovo,
 )
 

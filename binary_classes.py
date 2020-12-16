@@ -1,4 +1,4 @@
-#import cvxopt
+import cvxopt
 import numpy as np
 from collections import OrderedDict
 
@@ -314,17 +314,17 @@ class binary_classification_qp(Base_binary_classification):
         
         K = self._gram_matrix(X)
 
-#        P = cvxopt.matrix(np.outer(y, y) * K, tc='d')
-#        q = cvxopt.matrix(-1 * np.ones(n_samples), tc='d')
-#        G_1 = cvxopt.matrix(np.diag(np.ones(n_samples) * -1))
-#        h_1 = cvxopt.matrix(np.zeros(n_samples))
-#        G_2 = cvxopt.matrix(np.diag(np.ones(n_samples)))
-#        h_2 = cvxopt.matrix(np.ones(n_samples) * self.C)
-#        G = cvxopt.matrix(np.vstack((G_1, G_2)), tc='d')
-#        h = cvxopt.matrix(np.vstack((h_1, h_2)), tc='d')
-#        A = cvxopt.matrix(y, (1, n_samples), tc='d')
-#        b = cvxopt.matrix(0.0, tc='d')
-#        
-#        cvxopt.solvers.options['show_progress'] = False
-#        sol = cvxopt.solvers.qp(P, q, G, h, A, b)
+        P = cvxopt.matrix(np.outer(y, y) * K, tc='d')
+        q = cvxopt.matrix(-1 * np.ones(n_samples), tc='d')
+        G_1 = cvxopt.matrix(np.diag(np.ones(n_samples) * -1))
+        h_1 = cvxopt.matrix(np.zeros(n_samples))
+        G_2 = cvxopt.matrix(np.diag(np.ones(n_samples)))
+        h_2 = cvxopt.matrix(np.ones(n_samples) * self.C)
+        G = cvxopt.matrix(np.vstack((G_1, G_2)), tc='d')
+        h = cvxopt.matrix(np.vstack((h_1, h_2)), tc='d')
+        A = cvxopt.matrix(y, (1, n_samples), tc='d')
+        b = cvxopt.matrix(0.0, tc='d')
+       
+        cvxopt.solvers.options['show_progress'] = False
+        sol = cvxopt.solvers.qp(P, q, G, h, A, b)
         return np.ravel(sol['x'])
