@@ -14,7 +14,7 @@ class LimitedSizeDict(OrderedDict):
     def __setitem__(self, key, value):
         OrderedDict.__setitem__(self, key, value)
         self._check_size_limit()
-
+''
     def _check_size_limit(self):
         if self.size_limit is not None:
           while len(self) > self.size_limit:
@@ -296,7 +296,7 @@ class binary_classification_qp(Base_binary_classification):
     intercept_ : float
         Constant in decision function.
     """
-    def __init__(self, kernel, C=1.0):
+    def __init__(self, kernel, C=1.0, printCompletion = True):
         super().__init__(kernel, C=C)
         
     def _gram_matrix(self, X):
@@ -313,13 +313,13 @@ class binary_classification_qp(Base_binary_classification):
         self._n_features = n_features
         n = n_samples
         K = self._gram_matrix(X)
-        q = -np.ones((n,1))
-        t = y
-        P = t*np.transpose(t)*K
-        A = t.reshape(1,n)
-        b = 0
-        G = np.concatenate((np.eye(n),-np.eye(n)))
-        h = np.concatenate((self.C*np.ones((n,1)),np.zeros((n,1))))
+        q = -np.ones((n,1)).astype(np.double)
+        t = y.astype(np.double)
+        P = (t*np.transpose(t)*K).astype(np.double)
+        A = (t.reshape(1,n)).astype(np.double)
+        b = np.ones((1,1)).astype(np.double)
+        G = np.concatenate((np.eye(n),-np.eye(n))).astype(np.double)
+        h = np.concatenate((self.C*np.ones((n,1)),np.zeros((n,1)))).astype(np.double)
 
 
         # P = cvxopt.matrix(np.outer(y, y) * K, tc='d')
@@ -332,6 +332,12 @@ class binary_classification_qp(Base_binary_classification):
         # h = cvxopt.matrix(np.vstack((h_1, h_2)), tc='d')
         # A = cvxopt.matrix(y, (1, n_samples), tc='d')
         # b = cvxopt.matrix(0.0, tc='d')
+        # print(type(P))
+        # print(type(q))
+        # print(type(G))
+        # print(type(h))
+        # print(type(A))
+        # print(type(b))
        
         cvxopt.solvers.options['show_progress'] = False
         sol = cvxopt.solvers.qp(cvxopt.matrix(P), cvxopt.matrix(q),cvxopt.matrix(G),cvxopt.matrix(h), cvxopt.matrix(A),cvxopt.matrix(b))
